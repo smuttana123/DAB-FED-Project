@@ -17,4 +17,5 @@ targets:
     mode: production
     workspace:
       host: https://dbc-992cbc23-42f2.cloud.databricks.com
+      root_path: /Workspace/Users/smuttana@deloitte.com/.bundle/${bundle.name}/${bundle.target}
 
