@@ -1,0 +1,8 @@
+resources:
+  jobs:
+    sample_job:
+      name: sample_job
+      tasks:
+        - task_key: notebook_task
+          notebook_task:
+            notebook_path: ../src/sample_notebook.ipynb

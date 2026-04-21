@@ -1,0 +1,27 @@
+# Python Dependencies for Databricks Asset Bundle
+
+# Databricks CLI
+databricks-cli>=0.18.0
+
+# Delta Lake
+delta-spark>=2.4.0
+
+# PySpark (usually provided by Databricks runtime, but listed for local development)
+pyspark>=3.4.0
+
+# Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.1
+
+# Code Quality
+black>=23.7.0
+flake8>=6.1.0
+mypy>=1.5.0
+
+# Logging
+python-json-logger>=2.0.7
