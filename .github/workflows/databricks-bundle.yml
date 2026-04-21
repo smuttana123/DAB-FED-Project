@@ -1,0 +1,59 @@
+name: Databricks Bundle CI/CD
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-dev:
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        run: |
+          test -n "$DATABRICKS_HOST" || (echo "Missing secret: DATABRICKS_HOST" && exit 1)
+          test -n "$DATABRICKS_TOKEN" || (echo "Missing secret: DATABRICKS_TOKEN" && exit 1)
+
+      - name: Setup Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Validate bundle
+        run: databricks bundle validate --target dev
+
+      - name: Deploy bundle to dev
+        run: databricks bundle deploy --target dev
+
+  deploy-prod:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        run: |
+          test -n "$DATABRICKS_HOST" || (echo "Missing secret: DATABRICKS_HOST" && exit 1)
+          test -n "$DATABRICKS_TOKEN" || (echo "Missing secret: DATABRICKS_TOKEN" && exit 1)
+
+      - name: Setup Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Validate bundle
+        run: databricks bundle validate --target prod
+
+      - name: Deploy bundle to prod
+        run: databricks bundle deploy --target prod
