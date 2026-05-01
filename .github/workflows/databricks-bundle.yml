@@ -80,6 +80,9 @@ jobs:
       - name: Deploy bundle to dev
         run: databricks bundle deploy --target dev
 
+      - name: Run dev job
+        run: databricks bundle run --target dev sample_job
+
       - name: Show dev deployment summary
         run: databricks bundle summary --target dev
 
@@ -106,6 +109,9 @@ jobs:
 
       - name: Deploy bundle to prod
         run: databricks bundle deploy --target prod
+
+      - name: Run prod job
+        run: databricks bundle run --target prod sample_job
 
       - name: Show prod deployment summary
         run: databricks bundle summary --target prod
