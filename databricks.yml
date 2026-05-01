@@ -12,7 +12,7 @@ targets:
     default: true
     workspace:
       host: https://dbc-992cbc23-42f2.cloud.databricks.com
-      root_path: ~/.bundle/${bundle.name}/${bundle.target}
+      root_path: ~/dab_fed_project/${bundle.target}
 
   prod:
     mode: production
