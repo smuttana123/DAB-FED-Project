@@ -5,13 +5,59 @@ on:
     branches:
       - dev
       - main
+  push:
+    branches:
+      - dev
+      - main
 
 permissions:
   contents: read
 
 jobs:
+  validate-dev:
+    if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'dev'
+    runs-on: ubuntu-latest
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        run: |
+          test -n "$DATABRICKS_HOST" || (echo "Missing secret: DATABRICKS_HOST" && exit 1)
+          test -n "$DATABRICKS_TOKEN" || (echo "Missing secret: DATABRICKS_TOKEN" && exit 1)
+
+      - name: Setup Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Validate bundle
+        run: databricks bundle validate --target dev
+
+  validate-prod:
+    if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        run: |
+          test -n "$DATABRICKS_HOST" || (echo "Missing secret: DATABRICKS_HOST" && exit 1)
+          test -n "$DATABRICKS_TOKEN" || (echo "Missing secret: DATABRICKS_TOKEN" && exit 1)
+
+      - name: Setup Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Validate bundle
+        run: databricks bundle validate --target prod
+
   deploy-dev:
-    if: github.event.pull_request.base.ref == 'dev'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
@@ -35,7 +81,7 @@ jobs:
         run: databricks bundle deploy --target dev
 
   deploy-prod:
-    if: github.event.pull_request.base.ref == 'main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
