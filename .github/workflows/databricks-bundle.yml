@@ -1,7 +1,7 @@
 name: Databricks Bundle CI/CD
 
 on:
-  push:
+  pull_request:
     branches:
       - dev
       - main
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   deploy-dev:
-    if: github.ref == 'refs/heads/dev'
+    if: github.event.pull_request.base.ref == 'dev'
     runs-on: ubuntu-latest
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
@@ -35,7 +35,7 @@ jobs:
         run: databricks bundle deploy --target dev
 
   deploy-prod:
-    if: github.ref == 'refs/heads/main'
+    if: github.event.pull_request.base.ref == 'main'
     runs-on: ubuntu-latest
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
